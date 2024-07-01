@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+svg {
+  width: 100vw;
+  height: 80vh;
+}
+.task-stack-item {
+  fill: lightgray;
+  stroke: #333;
+  stroke-width: 1;
+}
+#controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+#iteration-count {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 18px;
+}
+#worker-config {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
