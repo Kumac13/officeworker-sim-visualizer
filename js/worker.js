@@ -14,7 +14,7 @@ class Worker {
   }
 
   removeTask(task) {
-    this.tasks = this.tasks.filter((t) => t.id !== task.id);
+    this.tasks = this.tasks.filter((t) => t !== task);
   }
 
   processTask() {
@@ -26,5 +26,11 @@ class Worker {
     } else if (this.tasks.length > 0) {
       this.currentTask = this.tasks.shift();
     }
+  }
+
+  getCurrentTaskInfo() {
+    return this.currentTask
+      ? `subject: ${this.currentTask.subject}\namount: ${this.currentTask.amount}`
+      : "No Task";
   }
 }

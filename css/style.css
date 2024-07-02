@@ -36,3 +36,16 @@ button {
   top: 20px;
   right: 20px;
 }
+
+.bubble {
+  fill: white;
+  stroke: black;
+  stroke-width: 1;
+  rx: 10;
+  ry: 10;
+}
+
+.bubble-text {
+  fill: black;
+  font-size: 12px;
+}

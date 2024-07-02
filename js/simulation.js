@@ -139,43 +139,33 @@ class Simulation {
     fromWorker.removeTask(task);
     this.visualizer.updateTaskStacks(this.workers);
 
-    if (task.by) {
-      const intermediateNode = this.communicationNodes.find(
-        (node) => node.id === task.by
-      );
-      if (intermediateNode) {
-        this.visualizer.moveTaskVisualWithIntermediate(
-          task,
-          fromWorker,
-          toWorker,
-          intermediateNode,
-          () => {
-            toWorker.addTask(task);
-            this.visualizer.updateTaskStacks(this.workers);
-            if (callback) callback();
-          }
-        );
-      } else {
-        console.error(`Communication method ${task.by} not found`);
-        this.visualizer.moveTaskVisual(task, fromWorker, toWorker, () => {
-          toWorker.addTask(task);
-          this.visualizer.updateTaskStacks(this.workers);
-          if (callback) callback();
-        });
-      }
-    } else {
-      this.visualizer.moveTaskVisual(task, fromWorker, toWorker, () => {
-        toWorker.addTask(task);
-        this.visualizer.updateTaskStacks(this.workers);
-        if (callback) callback();
-      });
-    }
+    const moveTaskVisual = task.by
+      ? this.visualizer.moveTaskVisualWithIntermediate.bind(this.visualizer)
+      : this.visualizer.moveTaskVisual.bind(this.visualizer);
+
+    const intermediateNode = task.by
+      ? this.communicationNodes.find((node) => node.id === task.by)
+      : null;
+
+    moveTaskVisual(task, fromWorker, toWorker, intermediateNode, () => {
+      toWorker.addTask(task);
+      this.visualizer.updateWorkers(this.workers);
+      this.visualizer.updateTaskStacks(this.workers);
+      if (callback) callback();
+    });
   }
 
   processTasks() {
     this.workers.forEach((worker) => {
-      worker.processTask();
-      this.visualizer.updateTaskStacks(this.workers);
+      if (worker.currentTask) {
+        worker.currentTask.amount--;
+        if (worker.currentTask.amount <= 0) {
+          worker.currentTask = null;
+        }
+      } else if (worker.tasks.length > 0) {
+        worker.currentTask = worker.tasks.shift();
+      }
     });
+    this.visualizer.updateWorkers(this.workers);
   }
 }

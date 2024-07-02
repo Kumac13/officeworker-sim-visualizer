@@ -12,17 +12,17 @@ class Visualizer {
   updateWorkers(workers) {
     const workerNodes = this.workerLayer
       .selectAll("g.worker")
-      .data(workers)
-      .join("g")
+      .data(workers, (d) => d.id);
+
+    const enterNodes = workerNodes
+      .enter()
+      .append("g")
       .attr("class", "worker")
       .attr("transform", (d) => `translate(${d.x}, ${d.y})`);
 
-    workerNodes.selectAll("circle").remove();
-    workerNodes.selectAll("text").remove();
+    enterNodes.append("circle").attr("r", 40).attr("fill", "blue");
 
-    workerNodes.append("circle").attr("r", 40).attr("fill", "blue");
-
-    workerNodes
+    enterNodes
       .append("text")
       .attr("text-anchor", "middle")
       .attr("dy", ".35em")
@@ -30,7 +30,7 @@ class Visualizer {
       .attr("font-size", "16px")
       .text((d) => d.name);
 
-    workerNodes
+    enterNodes
       .append("text")
       .attr("class", "kind-text")
       .attr("text-anchor", "middle")
@@ -38,6 +38,48 @@ class Visualizer {
       .attr("fill", "white")
       .attr("font-size", "12px")
       .text((d) => d.kind);
+
+    enterNodes
+      .append("rect")
+      .attr("class", "bubble")
+      .attr("x", 45)
+      .attr("y", 20)
+      .attr("width", 150)
+      .attr("height", 50)
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .attr("fill", "white")
+      .attr("stroke", "black")
+      .attr("stroke-width", 1);
+
+    enterNodes
+      .append("text")
+      .attr("class", "bubble-text")
+      .attr("x", 50)
+      .attr("y", 40)
+      .attr("fill", "black")
+      .attr("font-size", "12px");
+
+    // Update existing and new nodes
+    const allNodes = workerNodes.merge(enterNodes);
+
+    allNodes.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+
+    allNodes.select(".kind-text").text((d) => d.kind);
+
+    allNodes.select(".bubble-text").each(function (d) {
+      const taskInfo = d.getCurrentTaskInfo();
+      const lines = taskInfo.split("\n");
+      d3.select(this)
+        .selectAll("tspan")
+        .data(lines)
+        .join("tspan")
+        .attr("x", 50)
+        .attr("dy", (_, i) => (i === 0 ? 0 : "1.2em"))
+        .text((line) => line);
+    });
+
+    workerNodes.exit().remove();
 
     this.updateTaskStacks(workers);
   }
@@ -53,7 +95,7 @@ class Visualizer {
       .attr("y2", (d) => d.target.y)
       .attr("stroke", "black")
       .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "5,5"); // すべてのラインをドット線に
+      .attr("stroke-dasharray", "5,5");
   }
 
   updateTaskStacks(workers) {
@@ -70,11 +112,11 @@ class Visualizer {
         .attr("x", 50)
         .attr("width", 40)
         .attr("height", 10)
-        .attr("y", (_, i) => -20 + i * 15);
+        .attr("y", (_, i) => 20 - (i + 1) * 15);
 
       stackGroup.exit().remove();
 
-      stackGroup.attr("y", (_, i) => -20 + i * 15);
+      stackGroup.attr("y", (_, i) => 20 - (i + 1) * 15);
 
       d3.select(this)
         .select(".wip-text")
@@ -95,10 +137,10 @@ class Visualizer {
 
     communicationNodes
       .append("rect")
-      .attr("width", 60) // 四角の幅
-      .attr("height", 40) // 四角の高さ
-      .attr("x", -30) // 中心に配置するためのx座標調整
-      .attr("y", -20) // 中心に配置するためのy座標調整
+      .attr("width", 60)
+      .attr("height", 40)
+      .attr("x", -30)
+      .attr("y", -20)
       .attr("fill", "green");
 
     communicationNodes
@@ -151,7 +193,6 @@ class Visualizer {
       .attr("cx", fromWorker.x)
       .attr("cy", fromWorker.y);
 
-    // fromWorker から中間点への移動
     taskNode
       .transition()
       .duration(500)
@@ -164,7 +205,6 @@ class Visualizer {
         () => (t) => fromWorker.y + (intermediateNode.y - fromWorker.y) * t
       )
       .on("end", () => {
-        // 中間点から toWorker への移動
         taskNode
           .transition()
           .duration(500)
