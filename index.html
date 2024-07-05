@@ -16,7 +16,12 @@
     <div id="simulation-time">Simulation Time: 0y 0m 0w 0d 0h 0m</div>
     <div id="settingsModal" class="modal">
       <div class="modal-content">
-        <h2>Simulation Settings</h2>
+        <h2>Settings</h2>
+        <div class="settings-group">
+          <h3>Simulation Speed Setting</h3>
+          <label for="iterationSpeed">Iteration Speed (ms)</label>
+          <input type="number" id="iterationSpeed" min="100" value="1000">
+        </div>
         <div class="settings-group">
           <h3>Worker Settings</h3>
           <label for="workerCount">Number of Workers</label>
@@ -50,6 +55,5 @@
     <script src="js/visualizer.js"></script>
     <script src="js/simulation.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/modal.js"></script>
   </body>
 </html>

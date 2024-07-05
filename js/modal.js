@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function loadCurrentSettings() {
+    document.getElementById("iterationSpeed").value =
+      simulation.iterationInterval;
     document.getElementById("workerCount").value = simulation.workers.length;
     document.getElementById("minutesPerIteration").value =
       simulation.timeManager.timeConfig.minutesPerIteration;
@@ -59,5 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
       weeksPerMonth: parseInt(document.getElementById("weeksPerMonth").value),
       monthsPerYear: parseInt(document.getElementById("monthsPerYear").value),
     };
+
+    const newIterationSpeed = parseInt(
+      document.getElementById("iterationSpeed").value
+    );
+    simulation.setIterationSpeed(newIterationSpeed);
   }
 });

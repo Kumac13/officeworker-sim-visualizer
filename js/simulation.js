@@ -4,6 +4,7 @@ class Simulation {
     this.tasks = [];
     this.links = [];
     this.iterationCount = 0;
+    this.iterationInterval = 1000;
     this.simulationInterval = null;
     this.visualizer = visualizer;
     this.communicationMethods = ["slack", "email", "phone"];
@@ -33,7 +34,9 @@ class Simulation {
       const angle = (i / count) * 2 * Math.PI - Math.PI / 2;
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
-      this.workers.push(new Worker(i + 1, `Worker ${i + 1}`, "未分類", x, y));
+      this.workers.push(
+        new Worker(i + 1, `Worker ${i + 1}`, "undefined", x, y)
+      );
     }
   }
 
@@ -82,7 +85,11 @@ class Simulation {
   }
 
   start() {
-    this.simulationInterval = setInterval(() => this.simulateIteration(), 1000);
+    this.stop();
+    this.simulationInterval = setInterval(
+      () => this.simulateIteration(),
+      this.iterationInterval
+    );
   }
 
   stop() {
@@ -169,5 +176,13 @@ class Simulation {
       }
     });
     this.visualizer.updateWorkers(this.workers);
+  }
+
+  setIterationSpeed(interval) {
+    this.iterationInterval = interval;
+    if (this.simulationInterval) {
+      this.stop();
+      this.start();
+    }
   }
 }
