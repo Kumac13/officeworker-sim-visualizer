@@ -8,6 +8,7 @@ class Simulation {
     this.visualizer = visualizer;
     this.communicationMethods = ["slack", "email", "phone"];
     this.communicationNodes = [];
+    this.timeManager = new TimeManager();
   }
 
   initialize() {
@@ -90,8 +91,9 @@ class Simulation {
 
   simulateIteration() {
     this.iterationCount++;
-    document.getElementById("iteration-count").textContent =
-      `Iteration: ${this.iterationCount}`;
+    this.timeManager.incrementTime();
+    document.getElementById("simulation-time").textContent =
+      `Simulation Time: ${this.timeManager.getFormattedTime()}`;
 
     if (Math.random() < 0.5) {
       const newTask = this.createTask();
