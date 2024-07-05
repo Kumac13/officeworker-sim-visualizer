@@ -12,15 +12,18 @@
       <button id="startBtn">Start</button>
       <button id="stopBtn">Stop</button>
       <button id="settingsBtn">Settings</button>
+      <button id="logBtn">Log</button>
     </div>
+
     <div id="simulation-time">Simulation Time: 0y 0m 0w 0d 0h 0m</div>
+
     <div id="settingsModal" class="modal">
       <div class="modal-content">
         <h2>Settings</h2>
         <div class="settings-group">
           <h3>Simulation Speed Setting</h3>
           <label for="iterationSpeed">Iteration Speed (ms)</label>
-          <input type="number" id="iterationSpeed" min="100" value="1000">
+          <input type="number" id="iterationSpeed" min="100" value="1000" />
         </div>
         <div class="settings-group">
           <h3>Worker Settings</h3>
@@ -48,6 +51,17 @@
         </div>
       </div>
     </div>
+
+    <div id="logModal" class="modal">
+      <div class="modal-content">
+        <h2>Simulation Log</h2>
+        <div id="logContent"></div>
+        <div class="modal-buttons">
+          <button id="closeLog">Close</button>
+        </div>
+      </div>
+    </div>
+
     <svg id="simulation-svg"></svg>
     <script src="js/worker.js"></script>
     <script src="js/task.js"></script>

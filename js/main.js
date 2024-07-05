@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     simulation.stop();
   });
 
-  // モーダル関連の要素とイベントリスナー
   const modal = document.getElementById("settingsModal");
   const settingsBtn = document.getElementById("settingsBtn");
   const applyBtn = document.getElementById("applySettings");
@@ -44,19 +43,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const logModal = document.getElementById("logModal");
+  const logBtn = document.getElementById("logBtn");
+  const closeLogBtn = document.getElementById("closeLog");
+
+  logBtn.addEventListener("click", () => {
+    logModal.style.display = "block";
+    displayLog();
+  });
+
+  closeLogBtn.addEventListener("click", () => {
+    logModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target == logModal) {
+      logModal.style.display = "none";
+    }
+  });
+
   updateSVGSize();
   window.addEventListener("resize", updateSVGSize);
 });
 
 function loadCurrentSettings() {
-  document.getElementById("iterationSpeed").value = simulation.iterationInterval;
+  document.getElementById("iterationSpeed").value =
+    simulation.iterationInterval;
   document.getElementById("workerCount").value = simulation.workers.length;
-  document.getElementById("minutesPerIteration").value = simulation.timeManager.timeConfig.minutesPerIteration;
-  document.getElementById("minutesPerHour").value = simulation.timeManager.timeConfig.minutesPerHour;
-  document.getElementById("hoursPerDay").value = simulation.timeManager.timeConfig.hoursPerDay;
-  document.getElementById("daysPerWeek").value = simulation.timeManager.timeConfig.daysPerWeek;
-  document.getElementById("weeksPerMonth").value = simulation.timeManager.timeConfig.weeksPerMonth;
-  document.getElementById("monthsPerYear").value = simulation.timeManager.timeConfig.monthsPerYear;
+  document.getElementById("minutesPerIteration").value =
+    simulation.timeManager.timeConfig.minutesPerIteration;
+  document.getElementById("minutesPerHour").value =
+    simulation.timeManager.timeConfig.minutesPerHour;
+  document.getElementById("hoursPerDay").value =
+    simulation.timeManager.timeConfig.hoursPerDay;
+  document.getElementById("daysPerWeek").value =
+    simulation.timeManager.timeConfig.daysPerWeek;
+  document.getElementById("weeksPerMonth").value =
+    simulation.timeManager.timeConfig.weeksPerMonth;
+  document.getElementById("monthsPerYear").value =
+    simulation.timeManager.timeConfig.monthsPerYear;
 }
 
 function applySettings() {
@@ -71,7 +96,9 @@ function applySettings() {
     visualizer.updateCommunicationNodes(simulation.communicationNodes);
 
     simulation.timeManager.timeConfig = {
-      minutesPerIteration: parseInt(document.getElementById("minutesPerIteration").value),
+      minutesPerIteration: parseInt(
+        document.getElementById("minutesPerIteration").value
+      ),
       minutesPerHour: parseInt(document.getElementById("minutesPerHour").value),
       hoursPerDay: parseInt(document.getElementById("hoursPerDay").value),
       daysPerWeek: parseInt(document.getElementById("daysPerWeek").value),
@@ -79,7 +106,9 @@ function applySettings() {
       monthsPerYear: parseInt(document.getElementById("monthsPerYear").value),
     };
 
-    const newIterationSpeed = parseInt(document.getElementById("iterationSpeed").value);
+    const newIterationSpeed = parseInt(
+      document.getElementById("iterationSpeed").value
+    );
     simulation.setIterationSpeed(newIterationSpeed);
   } else {
     alert("Worker count must be at least 2");
@@ -98,4 +127,18 @@ function updateSVGSize() {
     visualizer.updateLinks(simulation.links);
     visualizer.updateCommunicationNodes(simulation.communicationNodes);
   }
+}
+
+function displayLog() {
+  const logContent = document.getElementById("logContent");
+  logContent.innerHTML = "";
+
+  simulation.workers.forEach((worker) => {
+    const workerLog = document.createElement("div");
+    workerLog.innerHTML = `<h3>${worker.name}</h3>
+      <p>Current Task: ${worker.currentTask ? worker.currentTask.subject : "None"}</p>
+      <p>Tasks:</p>
+      <ul>${worker.tasks.map((task) => `<li>${task.subject}: ${task.amount}</li>`).join("\n")}</ul>`;
+    logContent.appendChild(workerLog);
+  });
 }
