@@ -54,3 +54,51 @@ button {
   fill: black;
   font-size: 12px;
 }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+}
+
+.settings-group {
+  margin-bottom: 20px;
+}
+
+.settings-group h3 {
+  margin-bottom: 10px;
+}
+
+.settings-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.settings-group input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.modal-buttons {
+  text-align: right;
+}
+
+.modal-buttons button {
+  margin-left: 10px;
+}

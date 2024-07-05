@@ -11,12 +11,37 @@
     <div id="controls">
       <button id="startBtn">Start</button>
       <button id="stopBtn">Stop</button>
+      <button id="settingsBtn">Settings</button>
     </div>
     <div id="simulation-time">Simulation Time: 0y 0m 0w 0d 0h 0m</div>
-    <div id="worker-config">
-      <label for="worker-count">Worker Count:</label>
-      <input type="number" id="worker-count" min="2" value="3" />
-      <button id="apply-config">Apply</button>
+    <div id="settingsModal" class="modal">
+      <div class="modal-content">
+        <h2>Simulation Settings</h2>
+        <div class="settings-group">
+          <h3>Worker Settings</h3>
+          <label for="workerCount">Number of Workers</label>
+          <input type="number" id="workerCount" min="2" value="3" />
+        </div>
+        <div class="settings-group">
+          <h3>Time Settings</h3>
+          <label for="minutesPerIteration">Minutes per Iteration</label>
+          <input type="number" id="minutesPerIteration" min="1" value="1" />
+          <label for="minutesPerHour">Minutes per Hour</label>
+          <input type="number" id="minutesPerHour" min="1" value="60" />
+          <label for="hoursPerDay">Hours per Day</label>
+          <input type="number" id="hoursPerDay" min="1" value="8" />
+          <label for="daysPerWeek">Days per Week</label>
+          <input type="number" id="daysPerWeek" min="1" value="5" />
+          <label for="weeksPerMonth">Weeks per Month</label>
+          <input type="number" id="weeksPerMonth" min="1" value="4" />
+          <label for="monthsPerYear">Months per Year</label>
+          <input type="number" id="monthsPerYear" min="1" value="12" />
+        </div>
+        <div class="modal-buttons">
+          <button id="applySettings">Apply</button>
+          <button id="cancelSettings">Cancel</button>
+        </div>
+      </div>
     </div>
     <svg id="simulation-svg"></svg>
     <script src="js/worker.js"></script>
@@ -25,5 +50,6 @@
     <script src="js/visualizer.js"></script>
     <script src="js/simulation.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/modal.js"></script>
   </body>
 </html>
