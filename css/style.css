@@ -2,25 +2,30 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#simulation-time {
+  padding: 10px;
+  background-color: #f0f0f0;
+  text-align: center;
+  font-size: 18px;
 }
 
 svg {
-  width: 100vw;
-  height: 80vh;
-}
-
-.task-stack-item {
-  fill: lightgray;
-  stroke: #333;
-  stroke-width: 1;
+  width: 100%;
+  flex-grow: 1;
+  border: 2px solid #333;
+  box-sizing: border-box;
 }
 
 #controls {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  padding: 10px;
+  background-color: #f0f0f0;
   display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -30,16 +35,10 @@ button {
   cursor: pointer;
 }
 
-#simulation-time {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  font-size: 18px;
-}
-#worker-config {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+.task-stack-item {
+  fill: lightgray;
+  stroke: #333;
+  stroke-width: 1;
 }
 
 .bubble {
@@ -69,11 +68,13 @@ button {
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
-  max-width: 600px;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .settings-group {
@@ -89,10 +90,12 @@ button {
   margin-bottom: 5px;
 }
 
-.settings-group input {
+.settings-group input,
+.settings-group select {
   width: 100%;
   padding: 5px;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .modal-buttons {
@@ -102,3 +105,41 @@ button {
 .modal-buttons button {
   margin-left: 10px;
 }
+
+.process {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.task {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #fff;
+}
+
+.task-container {
+  padding-right: 10px;
+}
+
+#processContainer {
+  padding-right: 10px;
+}
+
+.process input,
+.task input,
+.process select {
+  width: calc(100% - 10px);
+  margin-bottom: 5px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.process label,
+.task label {
+  display: block;
+  margin-top: 5px;
+}
+

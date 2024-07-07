@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <div id="simulation-time">Simulation Time: 0y 0m 0w 0d 0h 0m</div>
+    <svg id="simulation-svg"></svg>
     <div id="controls">
       <button id="startBtn">Start</button>
       <button id="stopBtn">Stop</button>
@@ -16,15 +18,17 @@
       <button id="settingsBtn">Settings</button>
       <button id="logBtn">Log</button>
     </div>
-    <div id="simulation-time">Simulation Time: 0y 0m 0w 0d 0h 0m</div>
+
     <div id="settingsModal" class="modal">
       <div class="modal-content">
         <h2>Settings</h2>
+
         <div class="settings-group">
           <h3>Simulation Speed Setting</h3>
           <label for="iterationSpeed">Iteration Speed (ms)</label>
           <input type="number" id="iterationSpeed" min="100" value="500">
         </div>
+
         <div class="settings-group">
           <h3>Time Settings</h3>
           <label for="minutesPerIteration">Minutes per Iteration</label>
@@ -40,9 +44,11 @@
           <label for="monthsPerYear">Months per Year</label>
           <input type="number" id="monthsPerYear" min="1" value="12" />
         </div>
+
         <div class="settings-group">
           <h3>Process Settings</h3>
-          <button id="addProcessBtn">+</button><button id="removeProcessBtn">-</button>
+          <button id="addProcessBtn">+</button>
+          <button id="removeProcessBtn">-</button>
           <div id="processContainer">
             <div class="process">
               <label>Process Name</label>
@@ -63,7 +69,7 @@
                 <button class="addTaskBtn">+</button><button class="removeTaskBtn">-</button>
                 <div class="task">
                   <label>id</label>
-                  <input type="number" name="id" value = "1"/>
+                  <input type="number" name="id" value="1"/>
                   <label>subject</label>
                   <input type="text" name="subject" />
                   <label>from</label>
@@ -79,6 +85,7 @@
             </div>
           </div>
         </div>
+
         <div class="modal-buttons">
           <button id="applySettings">Apply</button>
           <button id="cancelSettings">Cancel</button>
@@ -96,7 +103,6 @@
       </div>
     </div>
 
-    <svg id="simulation-svg"></svg>
     <script src="js/worker.js"></script>
     <script src="js/task.js"></script>
     <script src="js/timeManager.js"></script>
@@ -105,3 +111,4 @@
     <script src="js/main.js"></script>
   </body>
 </html>
+
