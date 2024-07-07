@@ -11,24 +11,19 @@
     <div id="controls">
       <button id="startBtn">Start</button>
       <button id="stopBtn">Stop</button>
+      <button id="resetBtn">Reset</button>
+      <button id="stepBtn">Step</button>
       <button id="settingsBtn">Settings</button>
       <button id="logBtn">Log</button>
     </div>
-
     <div id="simulation-time">Simulation Time: 0y 0m 0w 0d 0h 0m</div>
-
     <div id="settingsModal" class="modal">
       <div class="modal-content">
         <h2>Settings</h2>
         <div class="settings-group">
           <h3>Simulation Speed Setting</h3>
           <label for="iterationSpeed">Iteration Speed (ms)</label>
-          <input type="number" id="iterationSpeed" min="100" value="1000" />
-        </div>
-        <div class="settings-group">
-          <h3>Worker Settings</h3>
-          <label for="workerCount">Number of Workers</label>
-          <input type="number" id="workerCount" min="2" value="3" />
+          <input type="number" id="iterationSpeed" min="100" value="500">
         </div>
         <div class="settings-group">
           <h3>Time Settings</h3>
@@ -44,6 +39,45 @@
           <input type="number" id="weeksPerMonth" min="1" value="4" />
           <label for="monthsPerYear">Months per Year</label>
           <input type="number" id="monthsPerYear" min="1" value="12" />
+        </div>
+        <div class="settings-group">
+          <h3>Process Settings</h3>
+          <button id="addProcessBtn">+</button><button id="removeProcessBtn">-</button>
+          <div id="processContainer">
+            <div class="process">
+              <label>Process Name</label>
+              <input type="text" name="process-name" />
+              <label>Timing</label>
+              <select name="timing">
+                <option value="perminutes">perminutes</option>
+                <option value="hourly">hourly</option>
+                <option value="daily">daily</option>
+                <option value="weekly">weekly</option>
+                <option value="monthly">monthly</option>
+                <option value="yearly">yearly</option>
+              </select>
+              <label>Frequency</label>
+              <input type="number" name="frequency" />
+              <div class="task-container">
+                <h4>Task Settings</h4>
+                <button class="addTaskBtn">+</button><button class="removeTaskBtn">-</button>
+                <div class="task">
+                  <label>id</label>
+                  <input type="number" name="id" value = "1"/>
+                  <label>subject</label>
+                  <input type="text" name="subject" />
+                  <label>from</label>
+                  <input type="text" name="from" />
+                  <label>to</label>
+                  <input type="text" name="to" />
+                  <label>by</label>
+                  <input type="text" name="by" />
+                  <label>amount</label>
+                  <input type="number" name="amount" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="modal-buttons">
           <button id="applySettings">Apply</button>
