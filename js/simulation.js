@@ -251,7 +251,7 @@ class Simulation {
       ? this.communicationNodes.find((node) => node.id === task.by)
       : null;
 
-    moveTaskVisual(task, fromWorker, toWorker, intermediateNode, () => {
+    moveTaskVisual(task, fromWorker, toWorker, intermediateNode, this.iterationInterval, () => {
       toWorker.addTask(task);
       this.visualizer.updateWorkers(this.workers);
       this.visualizer.updateTaskStacks(this.workers);
