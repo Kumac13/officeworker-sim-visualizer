@@ -3,7 +3,7 @@ class Simulation {
     this.workers = [];
     this.links = [];
     this.iterationCount = 0;
-    this.iterationInterval = 500; // 初期設定を500に変更
+    this.iterationInterval = 500;
     this.simulationInterval = null;
     this.visualizer = visualizer;
     this.communicationNodes = [];
@@ -121,8 +121,7 @@ class Simulation {
   simulateIteration() {
     this.iterationCount++;
     this.timeManager.incrementTime();
-    document.getElementById("simulation-time").textContent =
-      `Simulation Time: ${this.timeManager.getFormattedTime()}`;
+    this.visualizer.updateSimulationTime(this.timeManager);
 
     this.processes.forEach((process) => {
       if (this.shouldTriggerProcess(process)) {

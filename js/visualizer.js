@@ -9,6 +9,11 @@ class Visualizer {
       .attr("class", "communication-layer");
   }
 
+  updateSimulationTime(timeManager) {
+    document.getElementById("simulation-time").textContent =
+      `Simulation Time: ${timeManager.getFormattedTime()}`;
+  }
+
   updateWorkers(workers) {
     const workerNodes = this.workerLayer
       .selectAll("g.worker")
