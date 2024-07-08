@@ -44,7 +44,7 @@ class Simulation {
       const radius = Math.min(centerX, centerY) * 0.8;
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
-      return new Worker(index + 1, name, "undefined", x, y);
+      return new Worker(index + 1, name, x, y);
     });
 
     this.communicationNodes = Array.from(communicationNodeNames).map(
