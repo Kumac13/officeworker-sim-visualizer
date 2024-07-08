@@ -1,8 +1,7 @@
 class Worker {
-  constructor(id, name, kind, x, y) {
+  constructor(id, name, x, y) {
     this.id = id;
     this.name = name;
-    this.kind = kind;
     this.x = x;
     this.y = y;
     this.tasks = [];

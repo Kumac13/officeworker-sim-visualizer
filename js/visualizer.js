@@ -65,8 +65,6 @@ class Visualizer {
 
     allNodes.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
 
-    allNodes.select(".kind-text").text((d) => d.kind);
-
     allNodes.select(".bubble-text").each(function (d) {
       const taskInfo = d.getCurrentTaskInfo();
       const lines = taskInfo.split("\n");
@@ -152,7 +150,7 @@ class Visualizer {
       .text((d) => d.id);
   }
 
-  moveTaskVisual(task, fromWorker, toWorker, callback) {
+  moveTaskVisual(task, fromWorker, toWorker, duration, callback) {
     const taskNode = this.taskLayer
       .append("circle")
       .attr("class", "task")
@@ -163,7 +161,7 @@ class Visualizer {
 
     taskNode
       .transition()
-      .duration(1000)
+      .duration(duration)
       .attrTween(
         "cx",
         () => (t) => fromWorker.x + (toWorker.x - fromWorker.x) * t
@@ -183,8 +181,10 @@ class Visualizer {
     fromWorker,
     toWorker,
     intermediateNode,
+    duration,
     callback
   ) {
+    const halfDuration = duration / 2;
     const taskNode = this.taskLayer
       .append("circle")
       .attr("class", "task")
@@ -195,7 +195,7 @@ class Visualizer {
 
     taskNode
       .transition()
-      .duration(500)
+      .duration(halfDuration)
       .attrTween(
         "cx",
         () => (t) => fromWorker.x + (intermediateNode.x - fromWorker.x) * t
@@ -207,7 +207,7 @@ class Visualizer {
       .on("end", () => {
         taskNode
           .transition()
-          .duration(500)
+          .duration(halfDuration)
           .attrTween(
             "cx",
             () => (t) =>
