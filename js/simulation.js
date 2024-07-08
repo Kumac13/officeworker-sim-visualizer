@@ -92,14 +92,12 @@ class Simulation {
       () => this.simulateIteration(),
       this.iterationInterval
     );
-    console.log("Simulation started");
   }
 
   stop() {
     if (this.simulationInterval) {
       clearInterval(this.simulationInterval);
       this.simulationInterval = null;
-      console.log("Simulation stopped");
     }
   }
 
@@ -114,12 +112,10 @@ class Simulation {
     this.visualizer.updateWorkers(this.workers);
     this.visualizer.updateTaskStacks(this.workers);
     this.timeManager = new TimeManager();
-    console.log("Simulation reset");
   }
 
   step() {
     this.simulateIteration();
-    console.log("Step button clicked");
   }
 
   simulateIteration() {
