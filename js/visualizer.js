@@ -65,8 +65,6 @@ class Visualizer {
 
     allNodes.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
 
-    allNodes.select(".kind-text").text((d) => d.kind);
-
     allNodes.select(".bubble-text").each(function (d) {
       const taskInfo = d.getCurrentTaskInfo();
       const lines = taskInfo.split("\n");
