@@ -84,6 +84,7 @@ class Visualizer {
 
     workerNodes.exit().remove();
 
+    // TODO: 呼び出し側で別々に呼ぶように変更
     this.updateTaskStacks(workers);
   }
 
@@ -102,11 +103,19 @@ class Visualizer {
   }
 
   updateTaskStacks(workers) {
-    this.workerLayer.selectAll("g.worker").each(function (d) {
-      const stackGroup = d3
-        .select(this)
+    workers.forEach((worker) => {
+      const workerGroup = this.workerLayer
+        .selectAll("g.worker")
+        .filter((d) => d.id === worker.id);
+
+      if (workerGroup.empty()) {
+        console.warn(`Worker with id ${worker.id} not found`);
+        return;
+      }
+
+      const stackGroup = workerGroup
         .selectAll(".task-stack-item")
-        .data(d.tasks);
+        .data(worker.tasks);
 
       stackGroup
         .enter()
@@ -114,16 +123,13 @@ class Visualizer {
         .attr("class", "task-stack-item")
         .attr("x", 50)
         .attr("width", 40)
-        .attr("height", 10)
-        .attr("y", (_, i) => 20 - (i + 1) * 15);
-
-      stackGroup.exit().remove();
+        .attr("height", 10);
 
       stackGroup.attr("y", (_, i) => 20 - (i + 1) * 15);
 
-      d3.select(this)
-        .select(".wip-text")
-        .text(d.currentTask ? "WIP" : "");
+      stackGroup.exit().remove();
+
+      workerGroup.select(".wip-text").text(worker.currentTask ? "WIP" : "");
     });
   }
 
