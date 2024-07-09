@@ -3,7 +3,7 @@ class Simulation {
     this.workers = [];
     this.links = [];
     this.iterationCount = 0;
-    this.iterationInterval = 500; // 初期設定を500に変更
+    this.iterationInterval = 500;
     this.simulationInterval = null;
     this.visualizer = visualizer;
     this.communicationNodes = [];
@@ -18,6 +18,66 @@ class Simulation {
     this.visualizer.updateWorkers(this.workers);
     this.visualizer.updateLinks(this.links);
     this.visualizer.updateCommunicationNodes(this.communicationNodes);
+  }
+
+  simulateIteration() {
+    this.startPhase();
+    this.processPhase();
+    this.endPhase();
+  }
+
+  startPhase() {
+    this.iterationCount++;
+    this.timeManager.incrementTime();
+    this.visualizer.updateSimulationTime(this.timeManager);
+
+    this.processes.forEach((process) => {
+      if (this.shouldTriggerProcess(process)) {
+        this.startNewProcessInstance(process);
+      }
+    });
+  }
+
+  processPhase() {
+    this.processActiveInstances();
+    this.processTasks();
+  }
+
+  endPhase() {
+    // handle end of task and process
+  }
+
+  start() {
+    this.stop();
+    this.simulationInterval = setInterval(
+      () => this.simulateIteration(),
+      this.iterationInterval
+    );
+  }
+
+  stop() {
+    if (this.simulationInterval) {
+      clearInterval(this.simulationInterval);
+      this.simulationInterval = null;
+    }
+  }
+
+  reset() {
+    this.stop();
+    this.iterationCount = 0;
+    this.timeManager = new TimeManager();
+    this.activeProcessInstances = [];
+    this.workers.forEach((worker) => {
+      worker.tasks = [];
+      worker.currentTask = null;
+    });
+    this.visualizer.updateWorkers(this.workers);
+    this.visualizer.updateTaskStacks(this.workers);
+    this.visualizer.updateSimulationTime(this.timeManager);
+  }
+
+  step() {
+    this.simulateIteration();
   }
 
   createWorkersAndNodesFromProcesses() {
@@ -84,54 +144,6 @@ class Simulation {
         });
       });
     });
-  }
-
-  start() {
-    this.stop();
-    this.simulationInterval = setInterval(
-      () => this.simulateIteration(),
-      this.iterationInterval
-    );
-  }
-
-  stop() {
-    if (this.simulationInterval) {
-      clearInterval(this.simulationInterval);
-      this.simulationInterval = null;
-    }
-  }
-
-  reset() {
-    this.stop();
-    this.iterationCount = 0;
-    this.activeProcessInstances = [];
-    this.workers.forEach((worker) => {
-      worker.tasks = [];
-      worker.currentTask = null;
-    });
-    this.visualizer.updateWorkers(this.workers);
-    this.visualizer.updateTaskStacks(this.workers);
-    this.timeManager = new TimeManager();
-  }
-
-  step() {
-    this.simulateIteration();
-  }
-
-  simulateIteration() {
-    this.iterationCount++;
-    this.timeManager.incrementTime();
-    document.getElementById("simulation-time").textContent =
-      `Simulation Time: ${this.timeManager.getFormattedTime()}`;
-
-    this.processes.forEach((process) => {
-      if (this.shouldTriggerProcess(process)) {
-        this.startNewProcessInstance(process);
-      }
-    });
-
-    this.processActiveInstances();
-    this.processTasks();
   }
 
   shouldTriggerProcess(process) {
@@ -247,12 +259,19 @@ class Simulation {
       ? this.communicationNodes.find((node) => node.id === task.by)
       : null;
 
-    moveTaskVisual(task, fromWorker, toWorker, intermediateNode, this.iterationInterval, () => {
-      toWorker.addTask(task);
-      this.visualizer.updateWorkers(this.workers);
-      this.visualizer.updateTaskStacks(this.workers);
-      if (callback) callback();
-    });
+    moveTaskVisual(
+      task,
+      fromWorker,
+      toWorker,
+      intermediateNode,
+      this.iterationInterval,
+      () => {
+        toWorker.addTask(task);
+        this.visualizer.updateWorkers(this.workers);
+        this.visualizer.updateTaskStacks(this.workers);
+        if (callback) callback();
+      }
+    );
   }
 
   processActiveInstances() {
