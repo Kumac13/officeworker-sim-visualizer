@@ -43,7 +43,9 @@ class Simulation {
     this.processTasks();
   }
 
-  endPhase() {}
+  endPhase() {
+    // handle end of task and process
+  }
 
   start() {
     this.stop();
@@ -63,6 +65,7 @@ class Simulation {
   reset() {
     this.stop();
     this.iterationCount = 0;
+    this.timeManager = new TimeManager();
     this.activeProcessInstances = [];
     this.workers.forEach((worker) => {
       worker.tasks = [];
@@ -70,7 +73,7 @@ class Simulation {
     });
     this.visualizer.updateWorkers(this.workers);
     this.visualizer.updateTaskStacks(this.workers);
-    this.timeManager = new TimeManager();
+    this.visualizer.updateSimulationTime(this.timeManager);
   }
 
   step() {
