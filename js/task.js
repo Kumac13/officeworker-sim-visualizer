@@ -22,19 +22,4 @@ class Task {
     this.skipTo = skipTo;
     this.by = by || null;
   }
-
-  clone() {
-    return new Task(
-      this.id,
-      this.subject,
-      this.from,
-      this.to,
-      this.occurrenceRate,
-      this.successRate,
-      this.amount,
-      this.returnTo,
-      this.skipTo,
-      this.by
-    );
-  }
 }

@@ -70,35 +70,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.getElementById("addProcessBtn").addEventListener("click", addProcess);
-  document.getElementById("removeProcessBtn").addEventListener("click", removeProcess);
-  document.getElementById("processContainer").addEventListener("click", (event) => {
-    if (event.target.classList.contains("addTaskBtn")) {
-      addTask(event.target.closest(".task-container"));
-    } else if (event.target.classList.contains("removeTaskBtn")) {
-      removeTask(event.target.closest(".task-container"));
-    }
-  });
+  document
+    .getElementById("addProcessBtn")
+    .addEventListener("click", addProcess);
+  document
+    .getElementById("removeProcessBtn")
+    .addEventListener("click", removeProcess);
+  document
+    .getElementById("processContainer")
+    .addEventListener("click", (event) => {
+      if (event.target.classList.contains("addTaskBtn")) {
+        addTask(event.target.closest(".task-container"));
+      } else if (event.target.classList.contains("removeTaskBtn")) {
+        removeTask(event.target.closest(".task-container"));
+      }
+    });
 
   updateSVGSize();
   window.addEventListener("resize", updateSVGSize);
 });
 
 function loadCurrentSettings() {
-  document.getElementById("iterationSpeed").value = simulation.iterationInterval;
-  document.getElementById("minutesPerIteration").value = simulation.timeManager.timeConfig.minutesPerIteration;
-  document.getElementById("minutesPerHour").value = simulation.timeManager.timeConfig.minutesPerHour;
-  document.getElementById("hoursPerDay").value = simulation.timeManager.timeConfig.hoursPerDay;
-  document.getElementById("daysPerWeek").value = simulation.timeManager.timeConfig.daysPerWeek;
-  document.getElementById("weeksPerMonth").value = simulation.timeManager.timeConfig.weeksPerMonth;
-  document.getElementById("monthsPerYear").value = simulation.timeManager.timeConfig.monthsPerYear;
+  document.getElementById("iterationSpeed").value =
+    simulation.iterationInterval;
+  document.getElementById("minutesPerIteration").value =
+    simulation.timeManager.timeConfig.minutesPerIteration;
+  document.getElementById("minutesPerHour").value =
+    simulation.timeManager.timeConfig.minutesPerHour;
+  document.getElementById("hoursPerDay").value =
+    simulation.timeManager.timeConfig.hoursPerDay;
+  document.getElementById("daysPerWeek").value =
+    simulation.timeManager.timeConfig.daysPerWeek;
+  document.getElementById("weeksPerMonth").value =
+    simulation.timeManager.timeConfig.weeksPerMonth;
+  document.getElementById("monthsPerYear").value =
+    simulation.timeManager.timeConfig.monthsPerYear;
 }
 
 function applySettings() {
   simulation.stop();
 
   simulation.timeManager.timeConfig = {
-    minutesPerIteration: parseInt(document.getElementById("minutesPerIteration").value),
+    minutesPerIteration: parseInt(
+      document.getElementById("minutesPerIteration").value
+    ),
     minutesPerHour: parseInt(document.getElementById("minutesPerHour").value),
     hoursPerDay: parseInt(document.getElementById("hoursPerDay").value),
     daysPerWeek: parseInt(document.getElementById("daysPerWeek").value),
@@ -106,41 +121,48 @@ function applySettings() {
     monthsPerYear: parseInt(document.getElementById("monthsPerYear").value),
   };
 
-  const newIterationSpeed = parseInt(document.getElementById("iterationSpeed").value);
+  const newIterationSpeed = parseInt(
+    document.getElementById("iterationSpeed").value
+  );
   simulation.setIterationSpeed(newIterationSpeed);
 
   applyProcessSettings();
 }
 
 function applyProcessSettings() {
-  const processSettings = document.querySelectorAll("#processContainer .process");
+  const processSettings = document.querySelectorAll(
+    "#processContainer .process"
+  );
   const processes = [];
 
   processSettings.forEach((processElement, index) => {
-    const processName = processElement.querySelector("input[name='process-name']").value;
+    const processName = processElement.querySelector(
+      "input[name='process-name']"
+    ).value;
     const timing = processElement.querySelector("select[name='timing']").value;
-    const frequency = parseInt(processElement.querySelector("input[name='frequency']").value);
+    const frequency = parseInt(
+      processElement.querySelector("input[name='frequency']").value
+    );
     const tasks = [];
 
     const taskElements = processElement.querySelectorAll(".task");
     taskElements.forEach((taskElement) => {
-      const task = {
-        id: parseInt(taskElement.querySelector("input[name='id']").value),
-        subject: taskElement.querySelector("input[name='subject']").value,
-        from: taskElement.querySelector("input[name='from']").value,
-        to: taskElement.querySelector("input[name='to']").value,
-        by: taskElement.querySelector("input[name='by']").value,
-        amount: parseInt(taskElement.querySelector("input[name='amount']").value)
-      };
+      const task = new Task(
+        parseInt(taskElement.querySelector("input[name='id']").value),
+        taskElement.querySelector("input[name='subject']").value,
+        taskElement.querySelector("input[name='from']").value,
+        taskElement.querySelector("input[name='to']").value,
+        1,
+        1,
+        parseInt(taskElement.querySelector("input[name='amount']").value),
+        null,
+        null,
+        taskElement.querySelector("input[name='by']").value
+      );
       tasks.push(task);
     });
 
-    const process = {
-      name: processName,
-      timing: timing,
-      frequency: frequency,
-      tasks: tasks
-    };
+    const process = new Process(processName, timing, frequency, tasks);
 
     processes.push(process);
   });
@@ -221,12 +243,12 @@ function displayLog() {
   const logContent = document.getElementById("logContent");
   logContent.innerHTML = "";
 
-  simulation.workers.forEach(worker => {
+  simulation.workers.forEach((worker) => {
     const workerLog = document.createElement("div");
     workerLog.innerHTML = `<h3>${worker.name}</h3>
       <p>Current Task: ${worker.currentTask ? worker.currentTask.subject : "None"}</p>
       <p>Tasks:</p>
-      <ul>${worker.tasks.map(task => `<li>${task.subject}</li>`).join('')}</ul>`;
+      <ul>${worker.tasks.map((task) => `<li>${task.subject}</li>`).join("")}</ul>`;
     logContent.appendChild(workerLog);
   });
 }
