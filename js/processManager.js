@@ -11,6 +11,15 @@ class ProcessManager {
     this.processes = processes;
   }
 
+  executeTasks(visualizer) {
+    this.workers.forEach((worker) => {
+      if (!worker.currentTask && worker.tasks.length > 0) {
+        worker.currentTask = worker.tasks.shift();
+      }
+    });
+    visualizer.updateWorkers(this.workers);
+  }
+
   createWorkerAndCommunicationTool() {
     const workerNames = new Set();
     const communicationToolNames = new Set();

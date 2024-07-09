@@ -39,7 +39,7 @@ class Simulation {
 
   processPhase() {
     this.processActiveInstances();
-    this.processTasks();
+    this.processManager.executeTasks(this.visualizer);
   }
 
   endPhase() {
