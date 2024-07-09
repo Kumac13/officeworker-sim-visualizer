@@ -9,7 +9,8 @@ class Task {
     amount,
     returnTo,
     skipTo,
-    by
+    by,
+    processId
   ) {
     this.id = id;
     this.subject = subject;
@@ -21,5 +22,6 @@ class Task {
     this.returnTo = returnTo;
     this.skipTo = skipTo;
     this.by = by || null;
+    this.processId = processId;
   }
 }

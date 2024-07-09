@@ -136,6 +136,9 @@ function applyProcessSettings() {
   const processes = [];
 
   processSettings.forEach((processElement, index) => {
+    const processId = parseInt(
+      processElement.querySelector("input[name='process-id']").value
+    );
     const processName = processElement.querySelector(
       "input[name='process-name']"
     ).value;
@@ -157,12 +160,19 @@ function applyProcessSettings() {
         parseInt(taskElement.querySelector("input[name='amount']").value),
         null,
         null,
-        taskElement.querySelector("input[name='by']").value
+        taskElement.querySelector("input[name='by']").value,
+        processId
       );
       tasks.push(task);
     });
 
-    const process = new Process(processName, timing, frequency, tasks);
+    const process = new Process(
+      processId,
+      processName,
+      timing,
+      frequency,
+      tasks
+    );
 
     processes.push(process);
   });
@@ -173,6 +183,10 @@ function applyProcessSettings() {
 function addProcess() {
   const processContainer = document.getElementById("processContainer");
   const processTemplate = document.querySelector(".process").cloneNode(true);
+  processTemplate.querySelector("input[name='process-id']").value =
+    parseInt(processTemplate.querySelector("input[name='process-id']").value) +
+    1;
+
   processTemplate.querySelector("input[name='process-name']").value = "";
   processTemplate.querySelector("input[name='frequency']").value = "";
   const taskContainer = processTemplate.querySelector(".task-container");

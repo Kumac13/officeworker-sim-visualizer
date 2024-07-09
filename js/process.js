@@ -1,5 +1,6 @@
 class Process {
-  constructor(name, timing, frequency, tasks) {
+  constructor(id, name, timing, frequency, tasks) {
+    this.id = id;
     this.name = name;
     this.timing = timing;
     this.frequency = frequency;
