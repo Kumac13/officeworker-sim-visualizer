@@ -188,15 +188,6 @@ class Simulation {
     });
   }
 
-  processTasks() {
-    this.processManager.workers.forEach((worker) => {
-      if (!worker.currentTask && worker.tasks.length > 0) {
-        worker.currentTask = worker.tasks.shift();
-      }
-    });
-    this.visualizer.updateWorkers(this.processManager.workers);
-  }
-
   setIterationSpeed(interval) {
     this.iterationInterval = interval;
     if (this.simulationInterval) {
