@@ -21,6 +21,12 @@ class Simulation {
   }
 
   simulateIteration() {
+    this.startPhase();
+    this.processPhase();
+    this.endPhase();
+  }
+
+  startPhase() {
     this.iterationCount++;
     this.timeManager.incrementTime();
     this.visualizer.updateSimulationTime(this.timeManager);
@@ -30,10 +36,14 @@ class Simulation {
         this.startNewProcessInstance(process);
       }
     });
+  }
 
+  processPhase() {
     this.processActiveInstances();
     this.processTasks();
   }
+
+  endPhase() {}
 
   start() {
     this.stop();
