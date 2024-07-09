@@ -31,7 +31,7 @@ class Simulation {
     this.visualizer.updateSimulationTime(this.timeManager);
 
     this.processManager.processes.forEach((process) => {
-      if (this.shouldTriggerProcess(process)) {
+      if (process.isStartTiming(this.iterationCount, this.timeManager)) {
         this.startNewProcessInstance(process);
       }
     });
@@ -77,56 +77,6 @@ class Simulation {
 
   step() {
     this.simulateIteration();
-  }
-
-  shouldTriggerProcess(process) {
-    const totalMinutes =
-      this.iterationCount * this.timeManager.timeConfig.minutesPerIteration;
-    const minutesPerHour = this.timeManager.timeConfig.minutesPerHour;
-    const hoursPerDay = this.timeManager.timeConfig.hoursPerDay;
-    const daysPerWeek = this.timeManager.timeConfig.daysPerWeek;
-    const weeksPerMonth = this.timeManager.timeConfig.weeksPerMonth;
-    const monthsPerYear = this.timeManager.timeConfig.monthsPerYear;
-
-    switch (process.timing) {
-      case "perminutes":
-        return totalMinutes % process.frequency === 0;
-      case "hourly":
-        return totalMinutes % (minutesPerHour / process.frequency) === 0;
-      case "daily":
-        return (
-          totalMinutes %
-            ((minutesPerHour * hoursPerDay) / process.frequency) ===
-          0
-        );
-      case "weekly":
-        return (
-          totalMinutes %
-            ((minutesPerHour * hoursPerDay * daysPerWeek) /
-              process.frequency) ===
-          0
-        );
-      case "monthly":
-        return (
-          totalMinutes %
-            ((minutesPerHour * hoursPerDay * daysPerWeek * weeksPerMonth) /
-              process.frequency) ===
-          0
-        );
-      case "yearly":
-        return (
-          totalMinutes %
-            ((minutesPerHour *
-              hoursPerDay *
-              daysPerWeek *
-              weeksPerMonth *
-              monthsPerYear) /
-              process.frequency) ===
-          0
-        );
-      default:
-        return false;
-    }
   }
 
   startNewProcessInstance(process) {
