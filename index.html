@@ -51,12 +51,14 @@
           <button id="removeProcessBtn">-</button>
           <div id="processContainer">
             <div class="process">
+              <label>Id</label>
+              <input type="number" name="process-id" value="1"/>
               <label>Process Name</label>
               <input type="text" name="process-name" value="p"/>
               <label>Timing</label>
               <select name="timing">
                 <option value="perminutes">perminutes</option>
-                <option value="hourly">hourly</option>
+                <option value="hourly" selected>hourly</option>
                 <option value="daily">daily</option>
                 <option value="weekly">weekly</option>
                 <option value="monthly">monthly</option>
@@ -107,6 +109,8 @@
     <script src="js/task.js"></script>
     <script src="js/timeManager.js"></script>
     <script src="js/visualizer.js"></script>
+    <script src="js/process.js"></script>
+    <script src="js/processManager.js"></script>
     <script src="js/simulation.js"></script>
     <script src="js/main.js"></script>
   </body>

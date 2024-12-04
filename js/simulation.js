@@ -1,89 +1,49 @@
 class Simulation {
   constructor(visualizer) {
-    this.workers = [];
-    this.links = [];
     this.iterationCount = 0;
-    this.iterationInterval = 500; // 初期設定を500に変更
+    this.iterationInterval = 500;
     this.simulationInterval = null;
     this.visualizer = visualizer;
-    this.communicationNodes = [];
     this.timeManager = new TimeManager();
-    this.processes = [];
     this.activeProcessInstances = [];
+    this.processManager = new ProcessManager();
   }
 
   initialize() {
-    this.createWorkersAndNodesFromProcesses();
-    this.createLinks();
-    this.visualizer.updateWorkers(this.workers);
-    this.visualizer.updateLinks(this.links);
-    this.visualizer.updateCommunicationNodes(this.communicationNodes);
-  }
-
-  createWorkersAndNodesFromProcesses() {
-    const workerNames = new Set();
-    const communicationNodeNames = new Set();
-
-    this.processes.forEach((process) => {
-      process.tasks.forEach((task) => {
-        workerNames.add(task.from);
-        workerNames.add(task.to);
-        if (task.by) {
-          communicationNodeNames.add(task.by);
-        }
-      });
-    });
-
-    this.workers = Array.from(workerNames).map((name, index) => {
-      const angle = (index / workerNames.size) * 2 * Math.PI - Math.PI / 2;
-      const svg = d3.select("#simulation-svg");
-      const width = svg.node().clientWidth;
-      const height = svg.node().clientHeight;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const radius = Math.min(centerX, centerY) * 0.8;
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
-      return new Worker(index + 1, name, x, y);
-    });
-
-    this.communicationNodes = Array.from(communicationNodeNames).map(
-      (name, index) => {
-        const angle =
-          (index / communicationNodeNames.size) * 2 * Math.PI - Math.PI / 2;
-        const svg = d3.select("#simulation-svg");
-        const width = svg.node().clientWidth;
-        const height = svg.node().clientHeight;
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const radius = Math.min(centerX, centerY) * 0.4;
-        const x = centerX + radius * Math.cos(angle);
-        const y = centerY + radius * Math.sin(angle);
-        return { id: name, x: x, y: y };
-      }
+    this.processManager.createWorkerAndCommunicationTool();
+    this.processManager.createLinks();
+    this.visualizer.updateWorkers(this.processManager.workers);
+    this.visualizer.updateLinks(this.processManager.links);
+    this.visualizer.updateCommunicationNodes(
+      this.processManager.communicationTools
     );
   }
 
-  createLinks() {
-    this.links = [];
-    for (let i = 0; i < this.workers.length; i++) {
-      for (let j = i + 1; j < this.workers.length; j++) {
-        this.links.push({
-          source: this.workers[i],
-          target: this.workers[j],
-          type: "worker",
-        });
+  simulateIteration() {
+    this.startPhase();
+    this.processPhase();
+    this.endPhase();
+  }
+
+  startPhase() {
+    this.iterationCount++;
+    this.timeManager.incrementTime();
+    this.visualizer.updateSimulationTime(this.timeManager);
+
+    this.processManager.processes.forEach((process) => {
+      if (process.isStartTiming(this.iterationCount, this.timeManager)) {
+        this.startNewProcessInstance(process);
       }
-    }
-    this.workers.forEach((worker) => {
-      this.communicationNodes.forEach((node) => {
-        this.links.push({
-          source: worker,
-          target: node,
-          type: "communication",
-        });
-      });
     });
+  }
+
+  processPhase() {
+    this.processActiveInstances();
+    this.processManager.executeTasks(this.visualizer);
+  }
+
+  endPhase() {
+    // handle end of task and process
   }
 
   start() {
@@ -104,84 +64,19 @@ class Simulation {
   reset() {
     this.stop();
     this.iterationCount = 0;
+    this.timeManager = new TimeManager();
     this.activeProcessInstances = [];
-    this.workers.forEach((worker) => {
+    this.processManager.workers.forEach((worker) => {
       worker.tasks = [];
       worker.currentTask = null;
     });
-    this.visualizer.updateWorkers(this.workers);
-    this.visualizer.updateTaskStacks(this.workers);
-    this.timeManager = new TimeManager();
+    this.visualizer.updateWorkers(this.processManager.workers);
+    this.visualizer.updateTaskStacks(this.processManager.workers);
+    this.visualizer.updateSimulationTime(this.timeManager);
   }
 
   step() {
     this.simulateIteration();
-  }
-
-  simulateIteration() {
-    this.iterationCount++;
-    this.timeManager.incrementTime();
-    document.getElementById("simulation-time").textContent =
-      `Simulation Time: ${this.timeManager.getFormattedTime()}`;
-
-    this.processes.forEach((process) => {
-      if (this.shouldTriggerProcess(process)) {
-        this.startNewProcessInstance(process);
-      }
-    });
-
-    this.processActiveInstances();
-    this.processTasks();
-  }
-
-  shouldTriggerProcess(process) {
-    const totalMinutes =
-      this.iterationCount * this.timeManager.timeConfig.minutesPerIteration;
-    const minutesPerHour = this.timeManager.timeConfig.minutesPerHour;
-    const hoursPerDay = this.timeManager.timeConfig.hoursPerDay;
-    const daysPerWeek = this.timeManager.timeConfig.daysPerWeek;
-    const weeksPerMonth = this.timeManager.timeConfig.weeksPerMonth;
-    const monthsPerYear = this.timeManager.timeConfig.monthsPerYear;
-
-    switch (process.timing) {
-      case "perminutes":
-        return totalMinutes % process.frequency === 0;
-      case "hourly":
-        return totalMinutes % (minutesPerHour / process.frequency) === 0;
-      case "daily":
-        return (
-          totalMinutes %
-            ((minutesPerHour * hoursPerDay) / process.frequency) ===
-          0
-        );
-      case "weekly":
-        return (
-          totalMinutes %
-            ((minutesPerHour * hoursPerDay * daysPerWeek) /
-              process.frequency) ===
-          0
-        );
-      case "monthly":
-        return (
-          totalMinutes %
-            ((minutesPerHour * hoursPerDay * daysPerWeek * weeksPerMonth) /
-              process.frequency) ===
-          0
-        );
-      case "yearly":
-        return (
-          totalMinutes %
-            ((minutesPerHour *
-              hoursPerDay *
-              daysPerWeek *
-              weeksPerMonth *
-              monthsPerYear) /
-              process.frequency) ===
-          0
-        );
-      default:
-        return false;
-    }
   }
 
   startNewProcessInstance(process) {
@@ -211,8 +106,12 @@ class Simulation {
   }
 
   createAndMoveTask(taskConfig, processInstance) {
-    const fromWorker = this.workers.find((w) => w.name === taskConfig.from);
-    const toWorker = this.workers.find((w) => w.name === taskConfig.to);
+    const fromWorker = this.processManager.workers.find(
+      (w) => w.name === taskConfig.from
+    );
+    const toWorker = this.processManager.workers.find(
+      (w) => w.name === taskConfig.to
+    );
     if (fromWorker && toWorker) {
       const newTask = new Task(
         taskConfig.id,
@@ -227,32 +126,41 @@ class Simulation {
         taskConfig.by
       );
       fromWorker.addTask(newTask);
-      this.visualizer.updateTaskStacks(this.workers);
+      this.visualizer.updateTaskStacks(this.processManager.workers);
       this.moveTask(newTask, fromWorker, toWorker, () => {
         toWorker.currentTask = newTask;
-        this.visualizer.updateWorkers(this.workers);
+        this.visualizer.updateWorkers(this.processManager.workers);
       });
     }
   }
 
   moveTask(task, fromWorker, toWorker, callback) {
     fromWorker.removeTask(task);
-    this.visualizer.updateTaskStacks(this.workers);
+    this.visualizer.updateTaskStacks(this.processManager.workers);
 
     const moveTaskVisual = task.by
       ? this.visualizer.moveTaskVisualWithIntermediate.bind(this.visualizer)
       : this.visualizer.moveTaskVisual.bind(this.visualizer);
 
     const intermediateNode = task.by
-      ? this.communicationNodes.find((node) => node.id === task.by)
+      ? this.processManager.communicationTools.find(
+          (node) => node.id === task.by
+        )
       : null;
 
-    moveTaskVisual(task, fromWorker, toWorker, intermediateNode, this.iterationInterval, () => {
-      toWorker.addTask(task);
-      this.visualizer.updateWorkers(this.workers);
-      this.visualizer.updateTaskStacks(this.workers);
-      if (callback) callback();
-    });
+    moveTaskVisual(
+      task,
+      fromWorker,
+      toWorker,
+      intermediateNode,
+      this.iterationInterval,
+      () => {
+        toWorker.addTask(task);
+        this.visualizer.updateWorkers(this.processManager.workers);
+        this.visualizer.updateTaskStacks(this.processManager.workers);
+        if (callback) callback();
+      }
+    );
   }
 
   processActiveInstances() {
@@ -260,7 +168,9 @@ class Simulation {
       const currentTask =
         processInstance.tasks[processInstance.currentTaskIndex];
       if (currentTask && currentTask.remainingAmount > 0) {
-        const worker = this.workers.find((w) => w.name === currentTask.to);
+        const worker = this.processManager.workers.find(
+          (w) => w.name === currentTask.to
+        );
         if (
           worker &&
           worker.currentTask &&
@@ -278,15 +188,6 @@ class Simulation {
     });
   }
 
-  processTasks() {
-    this.workers.forEach((worker) => {
-      if (!worker.currentTask && worker.tasks.length > 0) {
-        worker.currentTask = worker.tasks.shift();
-      }
-    });
-    this.visualizer.updateWorkers(this.workers);
-  }
-
   setIterationSpeed(interval) {
     this.iterationInterval = interval;
     if (this.simulationInterval) {
@@ -296,16 +197,17 @@ class Simulation {
   }
 
   setProcesses(processes) {
-    this.processes = processes;
-    console.log("Processes set:", this.processes);
+    this.processManager.setProcesses(processes);
     this.initialize();
   }
 
   updateLayout() {
-    this.createWorkersAndNodesFromProcesses();
-    this.createLinks();
-    this.visualizer.updateWorkers(this.workers);
-    this.visualizer.updateLinks(this.links);
-    this.visualizer.updateCommunicationNodes(this.communicationNodes);
+    this.processManager.createWorkerAndCommunicationTool();
+    this.processManager.createLinks();
+    this.visualizer.updateWorkers(this.processManager.workers);
+    this.visualizer.updateLinks(this.processManager.links);
+    this.visualizer.updateCommunicationNodes(
+      this.processManager.communicationTools
+    );
   }
 }

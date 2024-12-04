@@ -9,7 +9,8 @@ class Task {
     amount,
     returnTo,
     skipTo,
-    by
+    by,
+    processId
   ) {
     this.id = id;
     this.subject = subject;
@@ -21,20 +22,6 @@ class Task {
     this.returnTo = returnTo;
     this.skipTo = skipTo;
     this.by = by || null;
-  }
-
-  clone() {
-    return new Task(
-      this.id,
-      this.subject,
-      this.from,
-      this.to,
-      this.occurrenceRate,
-      this.successRate,
-      this.amount,
-      this.returnTo,
-      this.skipTo,
-      this.by
-    );
+    this.processId = processId;
   }
 }
